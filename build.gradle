@@ -1,3 +1,5 @@
+import java.time.LocalDate
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
@@ -19,9 +21,25 @@ configurations {
     }
 }
 
+ext {
+    javaVersion = 21
+    currentDate = LocalDate.now()
+}
+
+println ext.javaVersion
+println ext.currentDate
+
+apply from: 'custom-tasks.gradle'
+apply plugin: CustomPlugin
+
 repositories {
     mavenCentral()
 }
+
+// implementation -> только для компиляции, но не для выполнения
+// compileOnly ->
+
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -30,9 +48,21 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
+//
 
-tasks.named('test') {
-    useJUnitPlatform()
+//Custom Plugin:
+
+class CustomPlugin implements Plugin<Project> {
+    @Override
+    void apply(Project target) {
+        println "CustomPlugin"
+    }
 }
+
+
+//

@@ -1,0 +1,88 @@
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+wrapper {
+    gradleVersion("8.10.2")
+}
+
+/// tasks.register('hello')
+//hello {
+//    description = "Hello world"
+//    group = "myhome"
+//}
+tasks.register("hello") {
+    description = "Hello world"
+    group = "myhome"
+
+    println "configuration.phase"
+
+    println "Gradle: ${gradle.hashCode()}, project: ${project.hashCode()}, rootProject: ${rootProject.hashCode()} "
+
+    doLast {
+        println("doLast_1")
+    }
+
+    doLast {
+        println("doLast_2")
+    }
+
+    doFirst {
+        println("doFirst_1")
+    }
+
+    doFirst {
+        println("doFirst_2")
+    }
+
+    println "description: ${description}, group: ${group}, actions: ${actions.size()} "
+
+    // ->
+    // > Task :hello
+    // Как стек
+    //doFirst_2
+    //doFirst_1
+    // Как очередь
+    //doLast_1
+    //doLast_2
+}
+
+tasks.register("task1") {
+    doLast {
+        println("task 1")
+    }
+}
+
+
+tasks.register("task2") {
+    doLast {
+        println("task 2")
+    }
+}
+
+tasks.register("task3") {
+    doLast {
+        println("task 3")
+    }
+}
+
+tasks.register("task4") {
+    doLast {
+        println("task 4")
+    }
+}
+
+task2.dependsOn task3
+task3.dependsOn task4
+// ->  При запуске task 2, сначала выполняются зависимые таски в порядке зависимости: task4 -> task3 -> task2
+task4.finalizedBy task1 //-> task4 заканчивается task-ом 1
+
+
+gradle.taskGraph.whenReady {
+    TaskExecutionGraph graph ->
+        println "Graph: "
+        graph.allTasks.each { it ->
+            println "${it.name}"
+        }
+}
